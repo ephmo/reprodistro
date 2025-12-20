@@ -86,7 +86,7 @@ git clone https://github.com/ephmo/reprofed.git
 cd reprofed
 
 # Run the installer
-sudo chmod +x install.sh
+chmod +x install.sh
 sudo ./install.sh --install
 ```
 
