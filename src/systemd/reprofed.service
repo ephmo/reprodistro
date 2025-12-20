@@ -1,0 +1,11 @@
+[Unit]
+Description=Apply declarative profile after boot
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/reprofed/bin/reprofed-apply.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
