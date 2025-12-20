@@ -1,0 +1,79 @@
+profile:
+  name: gnome
+  description: Fedora GNOME Workstation profile
+  version: "0.1.0"
+  distro: fedora
+  distro_versions:
+    - "42"
+    - "43"
+  arch: x86_64
+
+repos:
+  rpmfusion:
+    free: true
+    nonfree: true
+  flathub: true
+
+packages:
+  install:
+    all_versions:
+      # Base system
+      - "@core"
+      - authselect
+      - btrfs-progs
+      - chrony
+      - cryptsetup
+      - dosfstools
+      - efibootmgr
+      - grub2-efi-x64
+      - grub2-pc
+      - grub2-tools-extra
+      - grubby
+      - kernel
+      - langpacks-en
+      - lvm2
+      - shim-x64
+      - xfsprogs
+      - yq
+      # GNOME Desktop Environment
+      - gnome-desktop
+      - workstation-product
+
+    fedora_42:
+      # Fedora 42 specific native packages
+      []
+
+    fedora_43:
+      # Fedora 43 specific native packages
+      []
+
+    flatpak:
+      flathub:
+        # Flatpak applications from Flathub
+        []
+
+  exclude:
+    all_versions:
+      # Packages to remove across all Fedora versions
+      []
+
+    fedora_42:
+      # Fedora 42 specific exclusions
+      []
+
+    fedora_43:
+      # Fedora 43 specific exclusions
+      []
+
+services:
+  enable:
+    # Services enabled by default
+    - gdm
+
+  disable:
+    # Services disabled but not masked
+    []
+
+  mask:
+    # Services fully masked
+    []
