@@ -1,0 +1,101 @@
+# --------------------------------------------------
+# Profile metadata
+# --------------------------------------------------
+metadata:
+  name: example-gnome
+  description: Example Fedora GNOME profile
+  version: "1.0.0" # Semantic Versioning (MAJOR.MINOR.PATCH)
+  maintainer: your-name
+  last_updated: "2025-12-22"
+
+# --------------------------------------------------
+# Requirements / compatibility
+# --------------------------------------------------
+requires:
+  distro: fedora
+  distro_versions:
+    - "42"
+    - "43"
+  arch: x86_64
+
+# --------------------------------------------------
+# Repositories
+# --------------------------------------------------
+repos:
+  rpmfusion:
+    free: true
+    nonfree: true
+  flathub: true
+
+# --------------------------------------------------
+# Package management
+# --------------------------------------------------
+packages:
+  install:
+    # Packages installed on all supported Fedora versions
+    all_versions:
+      # Base system
+      - "@core"
+      - authselect
+      - btrfs-progs
+      - chrony
+      - cryptsetup
+      - dosfstools
+      - efibootmgr
+      - grub2-efi-x64
+      - grub2-pc
+      - grub2-tools-extra
+      - grubby
+      - kernel
+      - langpacks-en
+      - lvm2
+      - shim-x64
+      - xfsprogs
+      - yq
+
+      # Desktop
+      - gnome-desktop
+      - workstation-product
+
+    # Fedora-version-specific (optional)
+    fedora_42:
+      - example-fedora43-only-package
+
+    fedora_43:
+      - example-fedora44-only-package
+
+    # Flatpak applications (optional)
+    flatpak:
+      flathub:
+        - org.gnome.Calculator
+
+  exclude:
+    # Remove packages on all Fedora versions (optional)
+    all_versions:
+      - example-unwanted-package
+
+    # Fedora-version-specific removals (optional)
+    fedora_42:
+      - example-fedora43-unwanted-package
+
+    fedora_43:
+      - example-fedora44-unwanted-package
+
+# --------------------------------------------------
+# Services
+# --------------------------------------------------
+services:
+  # Enable services at boot (optional)
+  enable:
+    - gdm
+
+  # Disable services without masking (optional)
+  disable:
+    - example-disabled-service
+
+  # Mask services completely (optional)
+  mask:
+    - example-masked-service
+
+# This is an example profile template.
+# Real profiles should remove unused sections.
