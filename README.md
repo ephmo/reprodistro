@@ -1,4 +1,6 @@
-# ReproFed - Declarative Fedora Configuration Manager
+# ReproFed
+
+Declarative Fedora Configuration Manager
 
 ![Stage](https://img.shields.io/badge/stage-alpha-orange)
 ![License](https://img.shields.io/github/license/ephmo/reprofed)
