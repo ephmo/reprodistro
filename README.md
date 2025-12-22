@@ -1,6 +1,6 @@
 # ReproFed
 
-**Declarative Fedora Configuration Manager**
+## Declarative Fedora Configuration Manager
 
 ![Stage](https://img.shields.io/badge/stage-alpha-orange)
 ![License](https://img.shields.io/github/license/ephmo/reprofed)
@@ -30,6 +30,21 @@ ReproFed shifts the system management paradigm from manual tweaks to a desired-s
 1. **Define:** Choose or create a YAML profile.
 2. **Apply:** Use the ReproFed CLI to set the profile.
 3. **Sync:** ReproFed automatically brings the system into the state declared in the profile.
+
+---
+
+## 🧩 Officially Supported Profiles
+
+ReproFed officially supports and maintains the following system profiles:
+
+- **gnome** – Fedora Workstation with GNOME desktop
+- **kde** – Fedora KDE Plasma desktop
+- **cosmic** – Fedora with the COSMIC desktop environment
+- **server** – Minimal Fedora Server configuration
+
+These profiles are **part of the core ReproFed repository** and are tested and supported by the project.
+
+Additional profiles may exist in the community ecosystem [reprofed-profiles](https://github.com/ephmo/reprofed-profiles) but are not considered officially supported unless explicitly listed here.
 
 ---
 
@@ -97,22 +112,32 @@ sudo ./install.sh --install
 
 ---
 
-## ⚙️ Systemd Integration
-
-ReproFed can run as a systemd service to ensure your profile is enforced or to manage updates automatically upon boot.
-
-```bash
-reprofed --service enable
-```
-
 ---
 
 ## 🤝 Contributing
 
-Contributions, ideas, and feedback are welcome! Whether you want to add new profiles, improve scripts, or report bugs, feel free to:
+Contributions, ideas, and feedback are welcome!
 
-1. Open an **Issue** to discuss a bug or feature idea.
-2. Submit a **Pull Request** with your improvements.
+### Core Project Contributions
+
+You may open issues or submit pull requests for:
+
+- Bug fixes
+- CLI improvements
+- Documentation
+- Core logic and infrastructure
+
+### Profile Contributions
+
+The **core ReproFed repository only maintains officially supported profiles** (gnome, kde, cosmic, server).
+
+➡️ **New profile contributions must be submitted to the community repository:**
+
+🔗 [https://github.com/ephmo/reprofed-profiles](https://github.com/ephmo/reprofed-profiles)
+
+This separation keeps the core project stable while allowing the community to freely experiment, extend, and share additional profiles.
+
+If you are unsure where your contribution belongs, feel free to open an issue for guidance.
 
 ---
 
