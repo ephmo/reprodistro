@@ -1,6 +1,4 @@
-# ReproFed
-
-## Declarative Fedora Configuration Manager
+# ReproFed - Declarative Fedora Configuration Manager
 
 ![Stage](https://img.shields.io/badge/stage-alpha-orange)
 ![License](https://img.shields.io/github/license/ephmo/reprofed)
@@ -44,7 +42,7 @@ ReproFed officially supports and maintains the following system profiles:
 
 These profiles are **part of the core ReproFed repository** and are tested and supported by the project.
 
-Additional profiles may exist in the community ecosystem [reprofed-profiles](https://github.com/ephmo/reprofed-profiles) but are not considered officially supported unless explicitly listed here.
+Additional profiles may exist in the community ecosystem [ReproFed-Profiles](https://github.com/ephmo/reprofed-profiles) but are not considered officially supported unless explicitly listed here.
 
 ---
 
@@ -147,4 +145,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-**Your Fedora. Reproducible by design.**
+**ReproFed — Your Fedora, reproducible by design.**
