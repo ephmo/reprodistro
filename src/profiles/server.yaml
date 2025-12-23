@@ -1,0 +1,59 @@
+metadata:
+  name: server
+  description: Fedora Server profile
+  version: "1.0.0"
+  maintainer: ephmo
+  last_updated: "2025-12-23"
+
+requires:
+  distro: fedora
+  distro_versions:
+    - "42"
+    - "43"
+  arch: x86_64
+
+repos:
+  rpmfusion:
+    free: false
+    nonfree: false
+  flathub: false
+
+packages:
+  install:
+    all_versions:
+      # Minimal system
+      - "@core"
+      - authselect
+      - btrfs-progs
+      - chrony
+      - cryptsetup
+      - dosfstools
+      - efibootmgr
+      - grub2-efi-x64
+      - grub2-pc
+      - grub2-tools-extra
+      - grubby
+      - kernel
+      - langpacks-en
+      - lvm2
+      - shim-x64
+      - xfsprogs
+      - yq
+
+      # Server
+      - "@container-management"
+      - "@domain-client"
+      - "@guest-agents"
+      - "@hardware-support"
+      - "@headless-management"
+      - "@networkmanager-submodules"
+      - "@server-hardware-support"
+      - "@server-product"
+      - "@standard"
+
+services:
+  set-default:
+    - multi-user.target
+
+  enable:
+    - sshd.service
