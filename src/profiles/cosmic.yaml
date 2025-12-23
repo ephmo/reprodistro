@@ -1,0 +1,72 @@
+metadata:
+  name: cosmic
+  description: Fedora COSMIC Desktop profile
+  version: "1.0.0"
+  maintainer: ephmo
+  last_updated: "2025-12-23"
+
+requires:
+  distro: fedora
+  distro_versions:
+    - "42"
+    - "43"
+  arch: x86_64
+
+repos:
+  rpmfusion:
+    free: true
+    nonfree: true
+  flathub: true
+
+packages:
+  install:
+    all_versions:
+      # Minimal system
+      - "@core"
+      - authselect
+      - btrfs-progs
+      - chrony
+      - cryptsetup
+      - dosfstools
+      - efibootmgr
+      - grub2-efi-x64
+      - grub2-pc
+      - grub2-tools-extra
+      - grubby
+      - kernel
+      - langpacks-en
+      - lvm2
+      - shim-x64
+      - xfsprogs
+      - yq
+
+      # Desktop
+      - "@admin-tools"
+      - "@base-graphical"
+      - "@container-management"
+      - "@cosmic-desktop"
+      - "@cosmic-desktop-apps"
+      - "@desktop-accessibility"
+      - "@dial-up"
+      - "@firefox"
+      - "@fonts"
+      - "@guest-desktop-agents"
+      - "@hardware-support"
+      - "@input-methods"
+      - "@libreoffice"
+      - "@multimedia"
+      - "@networkmanager-submodules"
+      - "@printing"
+      - "@standard"
+      - flatpak
+
+  exclude:
+    all_versions:
+      - cosmic-store
+
+services:
+  set-default:
+    - graphical.target
+
+  enable:
+    - cosmic-greeter.service
