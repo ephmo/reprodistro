@@ -1,9 +1,9 @@
 metadata:
   name: gnome
   description: Fedora GNOME profile
-  version: "0.9.0"
+  version: "1.0.0"
   maintainer: ephmo
-  last_updated: "2025-12-22"
+  last_updated: "2025-12-23"
 
 requires:
   distro: fedora
@@ -21,7 +21,7 @@ repos:
 packages:
   install:
     all_versions:
-      # Base system
+      # Minimal system
       - "@core"
       - authselect
       - btrfs-progs
@@ -41,9 +41,31 @@ packages:
       - yq
 
       # Desktop
+      - admin-tools
+      - base-graphical
+      - container-management
+      - desktop-accessibility
+      - dial-up
+      - firefox
+      - fonts
       - gnome-desktop
+      - guest-desktop-agents
+      - hardware-support
+      - input-methods
+      - libreoffice
+      - multimedia
+      - networkmanager-submodules
+      - printing
+      - standard
       - workstation-product
 
+  exclude:
+    all_versions:
+      - gnome-software
+
 services:
+  set-default:
+    - graphical.target
+
   enable:
-    - gdm
+    - gdm.service
