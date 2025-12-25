@@ -17,6 +17,7 @@ repos:
     free: false
     nonfree: false
   flathub: false
+  vscode: false
 
 packages:
   install:
