@@ -4,7 +4,7 @@ shopt -s globstar nullglob
 
 echo "Checking for lines longer than 120 characters in .sh files..."
 
-if grep -R -n --include='*.sh' '.\{121\}' .; then
+if grep -R -n --include='*.sh' $(grep -Ev '^\s*(#|$)' .bashignore | sed 's/^/--exclude-dir=/') '.\{121\}' .; then
   echo "❌ Found bash lines longer than 120 characters"
   exit 1
 else
