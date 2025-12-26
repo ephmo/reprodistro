@@ -22,7 +22,7 @@ if ! check_distro_version; then
 fi
 
 func_install() {
-  if ! command -v yq >/dev/null 2>&1; then
+  if ! command -v yq > /dev/null 2>&1; then
     $DNF install -y yq
   fi
 
@@ -47,7 +47,7 @@ func_install() {
 }
 
 func_remove() {
-  systemctl disable --force --quiet --now reprofed.service 2>/dev/null
+  systemctl disable --force --quiet --now reprofed.service 2> /dev/null
   rm -f /etc/systemd/system/reprofed.service
   systemctl daemon-reload
   rm -f /usr/bin/reprofed
@@ -56,21 +56,21 @@ func_remove() {
 }
 
 func_help() {
-  cat <<EOF
+  cat << EOF
 Usage:
   $0 [OPTION]
 
 Options:
 EOF
 
-  cat <<EOF | column -t -s $'\t'
+  cat << EOF | column -t -s $'\t'
   -i, --install	Install the application
   -u, --update	Update the application
   -r, --remove	Remove the application
   -h, --help	Show this help message
 EOF
 
-  cat <<EOF
+  cat << EOF
 
 Examples:
   $APP_NAME -i

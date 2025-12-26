@@ -73,7 +73,7 @@ func_version() {
 }
 
 func_help() {
-  cat <<EOF
+  cat << EOF
 $APP_NAME - Declarative Fedora Configuration Manager
 
 Usage:
@@ -82,7 +82,7 @@ Usage:
 Options:
 EOF
 
-  cat <<EOF | column -t -s $'\t'
+  cat << EOF | column -t -s $'\t'
   -p, --profile	Manage profiles (list | info <profile> | get | set <profile>)
   -s, --service	Control $APP_NAME service (status | enable | disable)
   -u, --updates	Manage automatic system updates (status | enable | disable)
@@ -91,7 +91,7 @@ EOF
   -h, --help	Show this help message
 EOF
 
-  cat <<EOF
+  cat << EOF
 
 Examples:
   $APP_NAME --profile list
