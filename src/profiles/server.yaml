@@ -3,7 +3,7 @@ metadata:
   description: Fedora Server profile
   version: "1.0.0"
   maintainer: ephmo
-  last_updated: "2025-12-23"
+  last_updated: "2025-12-26"
 
 requires:
   distro: fedora
