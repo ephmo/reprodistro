@@ -29,7 +29,7 @@ func_profile_get() {
 
 func_profile_set() {
   if [ -f "$APP_PATH"/profiles/"$1".yaml ]; then
-    sudo yq -i ".profile = \"$1\"" "$APP_PATH"/config/config.yaml
+    sudo PROFILE_NAME="$1" yq -i '.profile = strenv(PROFILE_NAME)' "$APP_PATH"/config/config.yaml
     echo 'The profile will be applied on the first boot or after a reboot.'
   else
     echo "Error: Profile '$1' not found."
