@@ -1,0 +1,17 @@
+name: Bash line length check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-line-length:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check bash scripts for lines longer than 120 characters
+        run: |
+          chmod +x check-line-length.sh
+          ./check-line-length.sh
