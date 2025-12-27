@@ -52,3 +52,19 @@ if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" \
   msg_error "Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
   exit 1
 fi
+
+if yq -e '.repos.rpmfusion.free == "true"' "$PROFILE_FILE"; then
+  source "$SCRIPT_DIR"/../core/install_rpmfusion-free.sh
+fi
+
+if yq -e '.repos.rpmfusion.nonfree == "true"' "$PROFILE_FILE"; then
+  source "$SCRIPT_DIR"/../core/install_rpmfusion-nonfree.sh
+fi
+
+if yq -e '.repos.flathub == "true"' "$PROFILE_FILE"; then
+  source "$SCRIPT_DIR"/../core/install_flathub.sh
+fi
+
+if yq -e '.repos.vscode == "true"' "$PROFILE_FILE"; then
+  source "$SCRIPT_DIR"/../core/install_vscode.sh
+fi
