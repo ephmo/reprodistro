@@ -54,19 +54,19 @@ if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" \
 fi
 
 if yq -e '.repos.rpmfusion.free == "true"' "$PROFILE_FILE"; then
-  source "$SCRIPT_DIR"/../core/install_rpmfusion-free.sh
+  source "$SCRIPT_DIR"/../core/enable_rpmfusion-free.sh
 fi
 
 if yq -e '.repos.rpmfusion.nonfree == "true"' "$PROFILE_FILE"; then
-  source "$SCRIPT_DIR"/../core/install_rpmfusion-nonfree.sh
+  source "$SCRIPT_DIR"/../core/enable_rpmfusion-nonfree.sh
 fi
 
 if yq -e '.repos.flathub == "true"' "$PROFILE_FILE"; then
-  source "$SCRIPT_DIR"/../core/install_flathub.sh
+  source "$SCRIPT_DIR"/../core/enable_flathub.sh
 fi
 
 if yq -e '.repos.vscode == "true"' "$PROFILE_FILE"; then
-  source "$SCRIPT_DIR"/../core/install_vscode.sh
+  source "$SCRIPT_DIR"/../core/enable_vscode.sh
 fi
 
 if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
