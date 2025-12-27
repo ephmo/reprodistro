@@ -1,11 +1,25 @@
 [Unit]
-Description=Apply declarative profile after boot
-After=network.target
+Description=Apply declarative profile before graphical session
+Wants=network-online.target
+After=network-online.target
+Before=graphical.target
+RefuseManualStart=yes
+RefuseManualStop=yes
 
 [Service]
 Type=oneshot
+
+# Skip execution if no internet, but continue boot
+ExecStartPre=-/usr/bin/curl -s --head --connect-timeout 5 https://www.google.com
+
+# Apply profile (may take hours)
 ExecStart=/opt/reprofed/bin/reprofed-apply.sh
+
 RemainAfterExit=yes
+
+# Protect long-running package installs
+KillMode=process
+TimeoutStopSec=infinity
 
 [Install]
 WantedBy=multi-user.target
