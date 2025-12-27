@@ -32,3 +32,23 @@ if ! check_distro_version; then
   msg_error "Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported."
   exit 1
 fi
+
+PROFILE_NAME_VALUE=$(yq -r '.profile' "$APP_PATH"/config/config.yaml)
+
+if [[ -z "$PROFILE_NAME_VALUE" ]]; then
+  msg_error "Profile is not set."
+  exit 1
+fi
+
+PROFILE_FILE="${APP_PATH}/profiles/${PROFILE_NAME_VALUE}.yaml"
+
+if [ ! -f "$PROFILE_FILE" ]; then
+  msg_error "Profile '$PROFILE_NAME_VALUE' not found."
+  exit 1
+fi
+
+if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" \
+  yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$PROFILE_FILE"; then
+  msg_error "Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
+  exit 1
+fi
