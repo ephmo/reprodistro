@@ -68,3 +68,8 @@ fi
 if yq -e '.repos.vscode == "true"' "$PROFILE_FILE"; then
   source "$SCRIPT_DIR"/../core/install_vscode.sh
 fi
+
+if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
+  msg_error "No internet connection."
+  exit 1
+fi
