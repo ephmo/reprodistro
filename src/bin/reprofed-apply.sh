@@ -47,7 +47,8 @@ if [ ! -f "$PROFILE_FILE" ]; then
   exit 1
 fi
 
-if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$PROFILE_FILE"; then
+if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" \
+  yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$PROFILE_FILE"; then
   msg_error "Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
   exit 1
 fi
