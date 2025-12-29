@@ -53,16 +53,12 @@ if ! DISTRO_VERSION_ID="$DISTRO_VERSION_ID" \
   exit 1
 fi
 
-if yq -e '.repos.rpmfusion.free == "true"' "$PROFILE_FILE"; then
+if yq -e '.repos.rpmfusion-free == "true"' "$PROFILE_FILE"; then
   source "$SCRIPT_DIR"/../core/enable_rpmfusion-free.sh
 fi
 
-if yq -e '.repos.rpmfusion.nonfree == "true"' "$PROFILE_FILE"; then
+if yq -e '.repos.rpmfusion-nonfree == "true"' "$PROFILE_FILE"; then
   source "$SCRIPT_DIR"/../core/enable_rpmfusion-nonfree.sh
-fi
-
-if yq -e '.repos.flathub == "true"' "$PROFILE_FILE"; then
-  source "$SCRIPT_DIR"/../core/enable_flathub.sh
 fi
 
 if yq -e '.repos.vscode == "true"' "$PROFILE_FILE"; then
@@ -72,4 +68,8 @@ fi
 if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
   msg_error "No internet connection."
   exit 1
+fi
+
+if yq -e '.repos.flathub == "true"' "$PROFILE_FILE"; then
+  source "$SCRIPT_DIR"/../core/enable_flathub.sh
 fi
