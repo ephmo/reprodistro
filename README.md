@@ -16,8 +16,6 @@ The goal of ReproFed is to make Fedora systems **predictable, reproducible, and 
 - **Declarative Configuration:** Define your desired system state in simple YAML profiles.
 - **Reproducibility:** Replicate your exact setup across reinstalls and upgrades.
 - **Version-Aware:** Profiles respect Fedora versioning for safe and explicit upgrades.
-- **Modular Design:** Core actions are modular and extensible.
-- **Fedora-Native CLI:** Familiar command-line interface designed for the Fedora ecosystem.
 
 ---
 
@@ -37,10 +35,10 @@ ReproFed officially supports and maintains the following system profiles:
 
 - **gnome** – Fedora Workstation with GNOME desktop
 - **kde** – Fedora KDE Plasma desktop
-- **cosmic** – Fedora with the COSMIC desktop environment
+- **cosmic** – Fedora with the COSMIC desktop
 - **server** – Minimal Fedora Server configuration
 
-These profiles are **part of the core ReproFed repository** and are tested and supported by the project.
+These profiles are **part of the ReproFed repository** and are tested and supported by the project.
 
 Additional profiles may exist in the community ecosystem [ReproFed-Profiles](https://github.com/ephmo/reprofed-profiles) but are not considered officially supported unless explicitly listed here.
 
@@ -48,44 +46,14 @@ Additional profiles may exist in the community ecosystem [ReproFed-Profiles](htt
 
 ## 🛠 Usage
 
-### Profile Management
-
 ```bash
-# List available profiles
-reprofed --profile list
+# Switch to a TTY using Ctrl+Alt+F3 (or F2–F6)
 
-# View details of a specific profile
-reprofed --profile info gnome
-
-# Get current system profile
-reprofed --profile get
-
-# Apply a new profile
-reprofed --profile set gnome
+# Apply a profile
+sudo reprofed --profile gnome
 ```
 
-### Service & Update Management
-
-```bash
-# Manage the ReproFed systemd service
-reprofed --service [status|enable|disable]
-
-# Manage automatic system updates
-reprofed --updates [status|enable|disable]
-```
-
-### Maintenance & Logs
-
-```bash
-# View system logs
-reprofed --log
-
-# General help and versioning
-reprofed --version
-reprofed --help
-```
-
-> **Tip:** Short options are supported (e.g., `reprofed -p set gnome` or `reprofed -s status`).
+> **Tip:** Short options are supported (e.g., `sudo reprofed -p gnome`).
 
 ---
 
@@ -127,7 +95,7 @@ You may open issues or submit pull requests for:
 
 ### Profile Contributions
 
-The **core ReproFed repository only maintains officially supported profiles** (gnome, kde, cosmic, server).
+The **ReproFed repository only maintains officially supported profiles**.
 
 ➡️ **New profile contributions must be submitted to the community repository:**
 
