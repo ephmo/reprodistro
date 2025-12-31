@@ -99,18 +99,23 @@ This application is not intended for absolute beginners. It is aimed at users wh
 
 ## 🛠 Usage
 
-### ⚠️ Important
+⚠️ **Important**: Before switching to a TTY, make sure to save all your work and close any open files or applications.
 
-Before switching to a TTY, make sure to save all your work and close any open files or applications. Switching sessions may interrupt running programs.
+Switch to a TTY using Ctrl+Alt+F3 (or F2–F6).
+
+List all profiles.
 
 ```bash
-# Switch to a TTY using Ctrl+Alt+F3 (or F2–F6)
-
-# Apply a profile
-sudo reprofed --profile gnome
+sudo reprofed --list
 ```
 
-> **Tip:** Short options are supported (e.g., `sudo reprofed -p gnome`).
+Apply a profile (e.g., `gnome`).
+
+```bash
+sudo reprofed --apply gnome
+```
+
+> **Tip:** Short options are supported (e.g., `sudo reprofed -a gnome`).
 
 ---
 
