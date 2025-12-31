@@ -13,7 +13,7 @@ The goal of ReproFed is to make Fedora systems **predictable, reproducible, and 
 
 ## ⚠️ Read this before using ReproFed
 
-### ⚠️ Important Behavior: Declarative Package Management
+### ℹ️ Declarative Package Management
 
 ReproFed follows a **strict declarative model**.
 
@@ -99,7 +99,7 @@ This application is not intended for absolute beginners. It is aimed at users wh
 
 ## 🛠 Usage
 
-⚠️ **Important**: Before switching to a TTY, make sure to save all your work and close any open files or applications.
+**Important:** Before switching to a TTY, make sure to save all your work and close any open files or applications.
 
 Switch to a TTY using Ctrl+Alt+F3 (or F2–F6).
 
