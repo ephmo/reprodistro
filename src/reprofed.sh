@@ -158,7 +158,8 @@ func_help() {
 ReproFed - Declarative Fedora Configuration Manager
 
 Usage:
-  reprofed [OPTION] [COMMAND]
+  reprofed [OPTIONS]
+  reprofed --apply PROFILE
 
 Options:
 EOF
@@ -173,8 +174,8 @@ EOF
   cat << EOF
 
 Examples:
-  reprofed -a gnome
-  reprofed --apply kde
+  reprofed --list
+  sudo reprofed --apply gnome
 EOF
 }
 
