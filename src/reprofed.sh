@@ -27,7 +27,14 @@ fi
 
 systemctl isolate multi-user.target
 
-func_profile_set() {
+func_profile_list() {
+  for yaml_file in /opt/reprofed/profiles/*.yaml; do
+    [ -e "$yaml_file" ] || continue
+    basename "$yaml_file" .yaml
+  done
+}
+
+func_profile_apply() {
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
 
@@ -157,7 +164,8 @@ Options:
 EOF
 
   cat << EOF | column -t -s $'\t'
-  -p, --profile	Apply profile
+  -l, --list	List all profiles
+  -a, --apply	Apply a profile
   -v, --version	Show version
   -h, --help	Show this help message
 EOF
@@ -165,8 +173,8 @@ EOF
   cat << EOF
 
 Examples:
-  reprofed -p gnome
-  reprofed --profile kde
+  reprofed -a gnome
+  reprofed --apply kde
 EOF
 }
 
@@ -182,9 +190,9 @@ func_main() {
   fi
 
   case "$1" in
-    -p | --profile)
-      [[ $# -eq 2 ]] && func_profile_set "$2" || func_error_args
-      ;;
+    -l | --list) [[ $# -eq 1 ]] && func_profile_list || func_error_args ;;
+
+    -a | --apply) [[ $# -eq 2 ]] && func_profile_apply "$2" || func_error_args ;;
 
     -v | --version) [[ $# -eq 1 ]] && func_version || func_error_args ;;
 
