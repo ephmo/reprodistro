@@ -106,7 +106,7 @@ Switch to a TTY using Ctrl+Alt+F3 (or F2–F6).
 List all profiles.
 
 ```bash
-sudo reprofed --list
+reprofed --list
 ```
 
 Apply a profile (e.g., `gnome`).
