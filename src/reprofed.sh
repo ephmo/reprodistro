@@ -3,7 +3,7 @@ set -euo pipefail
 shopt -s globstar nullglob
 
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ This script must be run as root or with sudo."
+  echo "ERROR: This script must be run as root or with sudo."
   exit 1
 fi
 
@@ -13,43 +13,45 @@ distro_id="$ID"
 distro_version_id="$VERSION_ID"
 
 if [[ "$distro_id" != "fedora" ]]; then
-  echo "❌ Unsupported distribution: $distro_id"
+  echo "ERROR: Unsupported distribution: $distro_id"
   exit 1
 fi
 
 if [[ "$TERM" != "linux" ]]; then
-    echo "❌ This script must be run from a Linux virtual console (TTY)."
+    echo "ERROR: This script must be run from a Linux virtual console (TTY)."
     echo
     echo "You are currently running in a graphical terminal."
     echo "Switch to a TTY using Ctrl+Alt+F3 (or F2–F6), then run the script again."
     exit 1
 fi
 
+systemctl isolate multi-user.target
+
 func_profile_set() {
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
 
     if ! DISTRO_VERSION_ID="$distro_version_id" \
-      yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$profile_file"; then
-      echo "❌ Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
+      yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$profile_file" > /dev/null 2>&1; then
+      echo "ERROR: Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
       exit 1
     fi
 
-    if yq -e '.repos.rpmfusion-free == "true"' "$profile_file"; then
+    if yq -e '.repos.rpmfusion-free == "true"' "$profile_file" > /dev/null 2>&1; then
       if ! dnf5 repo list --enabled | grep -q "^${rpmfusion-free}"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
       fi
     fi
 
-    if yq -e '.repos.rpmfusion-nonfree == "true"' "$profile_file"; then
+    if yq -e '.repos.rpmfusion-nonfree == "true"' "$profile_file" > /dev/null 2>&1; then
       if ! dnf5 repo list --enabled | grep -q "^${rpmfusion-nonfree}"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
       fi
     fi
 
-    if yq -e '.repos.vscode == "true"' "$profile_file"; then
+    if yq -e '.repos.vscode == "true"' "$profile_file" > /dev/null 2>&1; then
       if ! dnf5 repo list --enabled | grep -q "^${code}"; then
         rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
@@ -67,7 +69,7 @@ EOF
     fi
 
     if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
-      echo "❌ No internet connection."
+      echo "ERROR: No internet connection."
       exit 1
     fi
 
@@ -109,7 +111,7 @@ EOF
     dnf5 mark dependency --skip-unavailable -y $installed_packages
 
     if ! dnf5 install --allowerasing -y $minimal_packages; then
-      echo "❌ Installation of minimal system packages failed."
+      echo "ERROR: Installation of minimal system packages failed."
       exit 1
     fi
 
@@ -117,16 +119,25 @@ EOF
     dnf5 autoremove -y
 
     if ! dnf5 install -y $packages_install_all_versions $packages_install_version_specific; then
-      echo "❌ Installation of selected profile packages failed."
+      echo "ERROR: Installation of selected profile packages failed."
       exit 1
     fi
 
     dnf5 autoremove -y
     dnf5 clean all
 
-    echo "✅ Profile applied successfully."
+    echo "SUCCESS: Profile applied successfully."
+    echo
+    echo "The system will reboot automatically in 10 seconds."
+    echo "Press Ctrl+C to cancel the reboot."
+    echo
+
+    sleep 9
+    echo "Rebooting now..."
+    sleep 1
+    reboot
   else
-    echo "❌ Profile '$1' not found."
+    echo "ERROR: Profile '$1' not found."
     exit 1
   fi
 }
@@ -160,7 +171,7 @@ EOF
 }
 
 func_error_args() {
-  echo "❌ Invalid or missing arguments." >&2
+  echo "ERROR: Invalid or missing arguments." >&2
   exit 1
 }
 
