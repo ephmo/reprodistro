@@ -39,7 +39,15 @@ func_profile_apply() {
 
     if ! DISTRO_VERSION_ID="$distro_version_id" \
       yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$profile_file" > /dev/null 2>&1; then
-      echo "ERROR: Fedora version ${DISTRO_VERSION_ID:-unknown} is not supported by the selected profile."
+      echo "ERROR: Fedora version is not supported."
+      exit 1
+    fi
+
+    distro_arch=$(uname -m)
+
+    if ! DISTRO_ARCH="$distro_arch" \
+      yq -e '.requires.arch == strenv(DISTRO_ARCH)' "$profile_file" > /dev/null 2>&1; then
+      echo "ERROR: Fedora architecture is not supported."
       exit 1
     fi
 
