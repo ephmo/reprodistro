@@ -3,8 +3,8 @@ metadata:
   description: Fedora Server profile
   version: "1.0.0"
   maintainer: ephmo
-  release_date: "2025-12-30"
-  last_modified: "2025-12-30"
+  release_date: "2026-01-01"
+  last_modified: "2026-01-01"
 
 requires:
   distro: fedora
@@ -12,11 +12,6 @@ requires:
     - "42"
     - "43"
   arch: x86_64
-
-repos:
-  rpmfusion-free: true
-  rpmfusion-nonfree: true
-  vscode: false
 
 packages:
   install:
