@@ -32,8 +32,6 @@ func_profile_apply() {
     exit 1
   fi
 
-  systemctl isolate multi-user.target
-
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
 
@@ -155,6 +153,21 @@ EOF
 
     dnf5 autoremove -y
     dnf5 clean all
+
+    services_set_default=$(yq -r '.services.set-default // [] | join(" ")' "$profile_file")
+    systemctl set-default --force $services_set_default
+
+    services_enable=$(yq -r '.services.enable // [] | join(" ")' "$profile_file")
+    systemctl enable --force $services_enable
+
+    services_disable=$(yq -r '.services.disable // [] | join(" ")' "$profile_file")
+    systemctl disable --force $services_disable
+
+    services_mask=$(yq -r '.services.mask // [] | join(" ")' "$profile_file")
+    systemctl mask --force $services_mask
+
+    services_unmask=$(yq -r '.services.unmask // [] | join(" ")' "$profile_file")
+    systemctl unmask --force $services_unmask
 
     echo "SUCCESS: Profile applied successfully."
     echo
