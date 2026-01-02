@@ -25,6 +25,23 @@ When a profile is applied:
 
 This behavior is intentional and is what allows ReproFed to switch cleanly between desktop environments or between desktop and server setups **without leaving leftover packages or system bloat**.
 
+### 📦 Supported Third-Party Repositories
+
+ReproFed supports enabling and managing the following third-party repositories when they are declared in a profile:
+
+- rpmfusion-free
+- rpmfusion-nonfree
+- Visual Studio Code (vscode)
+- COPR repositories
+
+These repositories are **only enabled when explicitly declared** in the active profile and are managed declaratively, just like packages and package groups.
+
+This ensures:
+
+- Predictable repository state
+- No unexpected third-party sources enabled by default
+- Full reproducibility across systems and installations
+
 ### ➕ Adding Extra Packages
 
 If you want additional packages beyond what a profile provides, you have two supported options:
