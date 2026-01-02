@@ -58,21 +58,21 @@ func_profile_apply() {
     fi
 
     if yq -e '.repos.rpmfusion-free == "true"' "$profile_file" > /dev/null 2>&1; then
-      if ! dnf5 repo list --enabled | grep -q "^${rpmfusion-free}"; then
+      if ! dnf5 repo list --enabled | grep -q -w "^rpmfusion-free"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
       fi
     fi
 
     if yq -e '.repos.rpmfusion-nonfree == "true"' "$profile_file" > /dev/null 2>&1; then
-      if ! dnf5 repo list --enabled | grep -q "^${rpmfusion-nonfree}"; then
+      if ! dnf5 repo list --enabled | grep -q -w "^rpmfusion-nonfree"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
       fi
     fi
 
     if yq -e '.repos.vscode == "true"' "$profile_file" > /dev/null 2>&1; then
-      if ! dnf5 repo list --enabled | grep -q "^${code}"; then
+      if ! dnf5 repo list --enabled | grep -q -w "^code"; then
         rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
         tee /etc/yum.repos.d/vscode.repo > /dev/null << EOF
@@ -87,6 +87,10 @@ gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
       fi
     fi
+
+    for copr_repo in $(yq -r '.repos.copr[]?' "$profile_file"); do
+      dnf5 copr enable -y "$copr_repo"
+    done
 
     if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
       echo "ERROR: No internet connection."
