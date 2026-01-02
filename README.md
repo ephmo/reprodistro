@@ -2,7 +2,7 @@
 
 Declarative Fedora Configuration Manager
 
-![Stage](https://img.shields.io/badge/stage-beta-yellow)
+![Status](https://img.shields.io/badge/status-maintained-green)
 ![License](https://img.shields.io/github/license/ephmo/reprofed)
 
 ReproFed is a declarative configuration manager designed specifically for Fedora Linux. It allows you to define system profiles using simple YAML files and apply them reproducibly across installations and Fedora releases.
@@ -137,8 +137,6 @@ sudo reprofed --apply gnome
 ---
 
 ## 📥 Installation
-
-> **Note:** ReproFed is currently intended for **advanced users and early adopters**.
 
 ```bash
 # Clone the repository
