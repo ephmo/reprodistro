@@ -32,6 +32,8 @@ func_profile_apply() {
     exit 1
   fi
 
+  systemctl isolate multi-user.target
+
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
 
