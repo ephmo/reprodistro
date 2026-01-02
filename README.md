@@ -116,9 +116,21 @@ This application is not intended for absolute beginners. It is aimed at users wh
 
 ## 🛠 Usage
 
-**Important:** Before switching to a TTY, make sure to save all your work and close any open files or applications.
+> **Important:** Before making any system changes, save all your work and close any open applications.
 
-Switch to a TTY using Ctrl+Alt+F3 (or F2–F6).
+To safely apply a profile, it is recommended to **switch to a TTY and stop the graphical session**. This prevents conflicts while desktop-related packages are added or removed.
+
+### Switch to a TTY and stop the graphical session
+
+1. Switch to a TTY using **Ctrl + Alt + F3** (or F2–F6).
+2. Log in with your user.
+3. Isolate the multi-user (non-graphical) target:
+
+```bash
+sudo systemctl isolate multi-user.target
+```
+
+### Profile Management
 
 List all profiles.
 
