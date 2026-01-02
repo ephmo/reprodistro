@@ -122,8 +122,13 @@ EOF
 
     packages_install_all_versions=$(yq -r '.packages.install.all_versions // [] | join(" ")' "$profile_file")
 
-    packages_install_version_specific=$(DISTRO_ID="$distro_id" \
-      yq -r '.packages.install["fedora_" + strenv(DISTRO_ID)] // [] | join(" ")' "$profile_file")
+    packages_install_version_specific=$(DISTRO_VERSION_ID="$distro_version_id" \
+      yq -r '.packages.install["fedora_" + strenv(DISTRO_VERSION_ID)] // [] | join(" ")' "$profile_file")
+
+    packages_exclude_all_versions=$(yq -r '.packages.exclude.all_versions // [] | join(",")' "$profile_file")
+
+    packages_exclude_version_specific=$(DISTRO_VERSION_ID="$distro_version_id" \
+      yq -r '.packages.exclude["fedora_" + strenv(DISTRO_VERSION_ID)] // [] | join(",")' "$profile_file")
 
     rm -f /etc/dnf/protected.d/*
 
@@ -142,7 +147,8 @@ EOF
     dnf5 mark user --skip-unavailable -y $minimal_packages
     dnf5 autoremove -y
 
-    if ! dnf5 install -y $packages_install_all_versions $packages_install_version_specific; then
+    if ! dnf5 install -y $packages_install_all_versions $packages_install_version_specific \
+      --exclude=$packages_exclude_all_versions,$packages_exclude_version_specific; then
       echo "ERROR: Installation of selected profile packages failed."
       exit 1
     fi
