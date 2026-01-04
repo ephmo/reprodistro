@@ -10,12 +10,18 @@ func_profile_list() {
 }
 
 func_profile_apply() {
+  echo "INFO: Applying profile: $1"
+
   if [ "$EUID" -ne 0 ]; then
     echo "ERROR: This command requires root privileges."
     exit 1
   fi
 
+  echo "OK: Running with root privileges"
+
   source /etc/os-release
+
+  echo "OK: Detected OS: $ID $VERSION_ID"
 
   distro_id="$ID"
   distro_version_id="$VERSION_ID"
@@ -25,6 +31,8 @@ func_profile_apply() {
     exit 1
   fi
 
+  echo "OK: Fedora Linux detected"
+
   if [[ "$TERM" != "linux" ]]; then
     echo "ERROR: This command must be run from a Linux virtual console (TTY)."
     echo
@@ -32,10 +40,16 @@ func_profile_apply() {
     exit 1
   fi
 
+  echo "OK: Running in Linux virtual console (TTY)"
+
+  echo "INFO: Switching system to multi-user (non-graphical) mode"
   systemctl isolate multi-user.target
 
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
+
+    echo "OK: Profile file found: $profile_file"
+    echo "INFO: Validating profile compatibility"
 
     if ! DISTRO_ID="$distro_id" \
       yq -e '.requires.distro == strenv(DISTRO_ID)' "$profile_file" > /dev/null 2>&1; then
@@ -43,11 +57,15 @@ func_profile_apply() {
       exit 1
     fi
 
+    echo "OK: Profile supports Fedora Linux"
+
     if ! DISTRO_VERSION_ID="$distro_version_id" \
       yq -e '.requires.distro_versions[] == strenv(DISTRO_VERSION_ID)' "$profile_file" > /dev/null 2>&1; then
       echo "ERROR: This profile does not support this version of Fedora Linux."
       exit 1
     fi
+
+    echo "OK: Profile supports Fedora $VERSION_ID"
 
     distro_arch=$(uname -m)
 
@@ -57,7 +75,11 @@ func_profile_apply() {
       exit 1
     fi
 
+    echo "OK: Profile supports architecture: $distro_arch"
+    echo "INFO: Configuring package repositories"
+
     if yq -e '.repos.rpmfusion-free == "true"' "$profile_file" > /dev/null 2>&1; then
+      echo "INFO: Ensuring RPM Fusion Free repository is enabled"
       if ! dnf5 repo list --enabled | grep -q -w "^rpmfusion-free"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -65,6 +87,7 @@ func_profile_apply() {
     fi
 
     if yq -e '.repos.rpmfusion-nonfree == "true"' "$profile_file" > /dev/null 2>&1; then
+      echo "INFO: Ensuring RPM Fusion Nonfree repository is enabled"
       if ! dnf5 repo list --enabled | grep -q -w "^rpmfusion-nonfree"; then
         dnf5 install -y \
           https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
@@ -72,6 +95,7 @@ func_profile_apply() {
     fi
 
     if yq -e '.repos.vscode == "true"' "$profile_file" > /dev/null 2>&1; then
+      echo "INFO: Ensuring Visual Studio Code repository is enabled"
       if ! dnf5 repo list --enabled | grep -q -w "^code"; then
         rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
@@ -88,14 +112,21 @@ EOF
       fi
     fi
 
+    echo "INFO: Enabling COPR repositories"
+
     for copr_repo in $(yq -r '.repos.copr[]?' "$profile_file"); do
       dnf5 copr enable -y "$copr_repo"
     done
+
+    echo "INFO: Checking internet connectivity"
 
     if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
       echo "ERROR: No internet connection."
       exit 1
     fi
+
+    echo "OK: Internet connection available"
+    echo "INFO: Preparing package transaction"
 
     minimal_packages="@core \
 	authselect \
@@ -120,6 +151,8 @@ EOF
     installed_groups=$(dnf5 group list --hidden --installed --quiet \
       | awk '$1 == "ID" { next } $1 == "Installed" { next } NF == 0 { next } { printf "%s ", $1 }')
 
+    echo "OK: Analyzed installed packages and groups"
+
     packages_install_all_versions=$(yq -r '.packages.install.all_versions // [] | join(" ")' "$profile_file")
 
     packages_install_version_specific=$(DISTRO_VERSION_ID="$distro_version_id" \
@@ -133,19 +166,31 @@ EOF
     rm -f /etc/dnf/protected.d/*
 
     if [[ -n "$installed_groups" ]]; then
+      echo "INFO: Removing installed package groups"
       dnf5 mark user --skip-unavailable -y $installed_packages
       dnf5 group remove -y --exclude=dnf5,grub2-efi-x64,grub2-pc,shim-x64 $installed_groups
     fi
 
+    echo "INFO: Reclassifying installed packages as dependencies"
+
     dnf5 mark dependency --skip-unavailable -y $installed_packages
+
+    echo "INFO: Installing minimal Fedora base system"
 
     if ! dnf5 install --allowerasing -y $minimal_packages; then
       echo "ERROR: Installation of minimal system packages failed."
       exit 1
     fi
 
+    echo "OK: Minimal system packages installed"
+
     dnf5 mark user --skip-unavailable -y $minimal_packages
+
+    echo "INFO: Removing unneeded packages"
+
     dnf5 autoremove -y
+
+    echo "INFO: Installing profile-specific packages"
 
     if ! dnf5 install -y $packages_install_all_versions $packages_install_version_specific \
       --exclude=$packages_exclude_all_versions,$packages_exclude_version_specific; then
@@ -153,8 +198,12 @@ EOF
       exit 1
     fi
 
+    echo "OK: Profile packages installed"
+
     dnf5 autoremove -y
     dnf5 clean all
+
+    echo "INFO: Applying service configuration"
 
     services_set_default=$(yq -r '.services.set-default // [] | join(" ")' "$profile_file")
     systemctl set-default --force $services_set_default
@@ -171,7 +220,7 @@ EOF
     services_unmask=$(yq -r '.services.unmask // [] | join(" ")' "$profile_file")
     systemctl unmask --force $services_unmask
 
-    echo "SUCCESS: Profile applied successfully."
+    echo "INFO: Profile application completed"
     echo
     echo "The system will reboot automatically in 10 seconds."
     echo "Press Ctrl+C to cancel the reboot."
