@@ -21,6 +21,23 @@ log_ok()    { echo "${C_OK}[OK]${C_RESET} $*"; }
 log_warn()  { echo "${C_WARN}[WARN]${C_RESET} $*"; }
 log_error() { echo "${C_ERROR}[ERROR]${C_RESET} $*" >&2; }
 
+LOCK_FILE="/run/reprofed.lock"
+LOCK_FD=200
+
+acquire_lock() {
+  exec {LOCK_FD}> "$LOCK_FILE" || exit 1
+
+  if ! flock -n "$LOCK_FD"; then
+    log_error "Another reprofed operation is already running"
+    exit 1
+  fi
+}
+
+release_lock() {
+  flock -u "$LOCK_FD" || true
+  rm -f "$LOCK_FILE"
+}
+
 check_root() {
   if [ "$EUID" -ne 0 ]; then
     log_error "This command requires root privileges."
@@ -44,10 +61,12 @@ func_profile_list() {
 }
 
 func_profile_apply() {
-  log_info "Applying profile: $1"
   check_root
-  log_ok "Running with root privileges"
 
+  acquire_lock
+  trap release_lock EXIT
+
+  log_info "Applying profile: $1"
   source /etc/os-release
 
   log_ok "Detected OS: $ID $VERSION_ID"
