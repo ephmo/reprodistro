@@ -2,11 +2,30 @@
 set -euo pipefail
 shopt -s globstar nullglob
 
+if [[ -t 1 ]] && [[ "${NO_COLOR:-}" != "1" ]]; then
+  C_INFO=$'\033[1;34m'
+  C_OK=$'\033[1;32m'
+  C_WARN=$'\033[1;33m'
+  C_ERROR=$'\033[1;31m'
+  C_RESET=$'\033[0m'
+else
+  C_INFO=""
+  C_OK=""
+  C_WARN=""
+  C_ERROR=""
+  C_RESET=""
+fi
+
+log_info()  { echo "${C_INFO}[INFO]${C_RESET} $*"; }
+log_ok()    { echo "${C_OK}[OK]${C_RESET} $*"; }
+log_warn()  { echo "${C_WARN}[WARN]${C_RESET} $*"; }
+log_error() { echo "${C_ERROR}[ERROR]${C_RESET} $*" >&2; }
+
 script_path="$(readlink -f "${BASH_SOURCE[0]}")"
 script_dir="$(dirname "$script_path")"
 
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ This script must be run as root or with sudo."
+  log_error "This script must be run as root or with sudo."
   exit 1
 fi
 
@@ -15,7 +34,7 @@ source /etc/os-release
 distro_id="$ID"
 
 if [[ "$distro_id" != "fedora" ]]; then
-  echo "❌ Unsupported distribution: $distro_id"
+  log_error "Unsupported distribution: $distro_id"
   exit 1
 fi
 
@@ -64,7 +83,7 @@ EOF
 }
 
 func_error_args() {
-  echo "❌ Invalid argument." >&2
+  log_error "Invalid argument."
   exit 1
 }
 
@@ -89,4 +108,4 @@ func_main() {
 
 func_main "$@"
 
-echo "✅ Installation completed successfully."
+log_ok "Installation completed successfully."
