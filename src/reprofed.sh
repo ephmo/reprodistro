@@ -126,7 +126,7 @@ EOF
     copr_repos=$(yq -r '.repos.copr[]?' "$profile_file")
 
     if [[ -n "$copr_repos" ]]; then
-      log_info "Enabling COPR repositories"
+      log_info "Ensuring COPR repositories are enabled"
       for copr_repo in $copr_repos; do
         dnf5 copr enable -y "$copr_repo"
       done
