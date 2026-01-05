@@ -123,10 +123,14 @@ EOF
       fi
     fi
 
-    log_info "Enabling COPR repositories"
-    for copr_repo in $(yq -r '.repos.copr[]?' "$profile_file"); do
-      dnf5 copr enable -y "$copr_repo"
-    done
+    copr_repos=$(yq -r '.repos.copr[]?' "$profile_file")
+
+    if [[ -n "$copr_repos" ]]; then
+      log_info "Enabling COPR repositories"
+      for copr_repo in $copr_repos; do
+        dnf5 copr enable -y "$copr_repo"
+      done
+    fi
 
     log_info "Checking internet connectivity"
     if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
