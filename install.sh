@@ -21,13 +21,15 @@ log_ok()    { echo "${C_OK}[OK]${C_RESET} $*"; }
 log_warn()  { echo "${C_WARN}[WARN]${C_RESET} $*"; }
 log_error() { echo "${C_ERROR}[ERROR]${C_RESET} $*" >&2; }
 
+check_root() {
+  if [ "$EUID" -ne 0 ]; then
+    log_error "This command requires root privileges."
+    exit 1
+  fi
+}
+
 script_path="$(readlink -f "${BASH_SOURCE[0]}")"
 script_dir="$(dirname "$script_path")"
-
-if [ "$EUID" -ne 0 ]; then
-  log_error "This script must be run as root or with sudo."
-  exit 1
-fi
 
 source /etc/os-release
 
@@ -39,7 +41,10 @@ if [[ "$distro_id" != "fedora" ]]; then
 fi
 
 func_install() {
+  check_root
+
   if ! command -v yq > /dev/null 2>&1; then
+    log_info "Installing dependency: yq"
     dnf5 install -y yq
   fi
 
@@ -54,6 +59,8 @@ func_install() {
 }
 
 func_remove() {
+  check_root
+
   rm -f /usr/bin/reprofed
   rm -rf /opt/reprofed/
 }
