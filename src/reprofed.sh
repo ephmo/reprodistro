@@ -21,6 +21,21 @@ log_ok()    { echo "${C_OK}[OK]${C_RESET} $*"; }
 log_warn()  { echo "${C_WARN}[WARN]${C_RESET} $*"; }
 log_error() { echo "${C_ERROR}[ERROR]${C_RESET} $*" >&2; }
 
+check_root() {
+  if [ "$EUID" -ne 0 ]; then
+    log_error "This command requires root privileges."
+    exit 1
+  fi
+}
+
+check_internet() {
+  log_info "Checking internet connectivity"
+  if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
+    log_error "No internet connection."
+    exit 1
+  fi
+}
+
 func_profile_list() {
   for yaml_file in /opt/reprofed/profiles/*.yaml; do
     [ -e "$yaml_file" ] || continue
@@ -30,10 +45,7 @@ func_profile_list() {
 
 func_profile_apply() {
   log_info "Applying profile: $1"
-  if [ "$EUID" -ne 0 ]; then
-    log_error "This command requires root privileges."
-    exit 1
-  fi
+  check_root
   log_ok "Running with root privileges"
 
   source /etc/os-release
@@ -132,11 +144,7 @@ EOF
       done
     fi
 
-    log_info "Checking internet connectivity"
-    if ! curl -s --head --connect-timeout 5 https://www.google.com > /dev/null; then
-      log_error "No internet connection."
-      exit 1
-    fi
+    check_internet
     log_ok "Internet connection available"
 
     log_info "Preparing package transaction"
