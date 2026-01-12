@@ -45,7 +45,10 @@ func_install() {
 
   if ! command -v yq > /dev/null 2>&1; then
     log_info "Installing dependency: yq"
-    dnf5 install -y yq
+    dnf5 install -y yq || {
+      log_error "Failed to install yq dependency"
+      exit 1
+    }
   fi
 
   install -d -m 755 /opt/reprofed

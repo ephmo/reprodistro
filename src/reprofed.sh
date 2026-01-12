@@ -53,6 +53,65 @@ check_internet() {
   fi
 }
 
+func_update() {
+  check_root
+
+  acquire_lock
+  trap release_lock EXIT
+
+  check_internet
+
+  log_info "Checking for ReproFed updates"
+
+  current_version="$(func_version | tr -d '\n')"
+  log_info "Current version: ${current_version}"
+
+  latest_version="$(curl -fsSL https://raw.githubusercontent.com/ephmo/reprofed/refs/heads/main/src/VERSION | tr -d '\n')"
+
+  if [[ -z "$latest_version" ]]; then
+    log_error "Failed to retrieve latest version information"
+    return 1
+  fi
+
+  log_info "Latest version: ${latest_version}"
+
+  if [[ "$current_version" == "$latest_version" ]]; then
+    log_ok "ReproFed is already up to date"
+    return 0
+  fi
+
+  log_info "Preparing update workspace"
+  update_dir="/opt/reprofed/.update"
+  rm -rf -- "$update_dir"
+  mkdir -p "$update_dir"
+
+  log_info "Downloading update"
+
+  if ! command -v git > /dev/null 2>&1; then
+    log_info "Installing dependency: git"
+    dnf5 install -y git || {
+      log_error "Failed to install git dependency"
+      return 1
+    }
+  fi
+
+  if ! git clone --depth=1 https://github.com/ephmo/reprofed.git "$update_dir"; then
+    log_error "Failed to download ReproFed update from GitHub"
+    return 1
+  fi
+
+  log_info "Running update installer"
+  if ! "$update_dir/install.sh" --update; then
+    log_error "Update installer failed"
+    return 1
+  fi
+
+  log_info "Cleaning up update workspace"
+  rm -rf -- "$update_dir"
+
+  log_ok "ReproFed updated successfully to version ${latest_version}"
+}
+
 func_profile_list() {
   for yaml_file in /opt/reprofed/profiles/*.yaml; do
     [ -e "$yaml_file" ] || continue
@@ -65,6 +124,37 @@ func_profile_apply() {
 
   acquire_lock
   trap release_lock EXIT
+
+  if [[ "$TERM" != "linux" ]]; then
+    log_error "This command must be run from a Linux virtual console (TTY)."
+    echo
+    echo "Use Ctrl + Alt + F3 (or F2–F6) to switch to a TTY and try again."
+    exit 1
+  fi
+
+  log_ok "Running in Linux virtual console (TTY)"
+
+  if systemctl is-active --quiet graphical.target; then
+    log_info "Graphical session detected"
+
+    cat << EOF
+
+Switching to multi-user.target will:
+- Log you out of the graphical session
+- Terminate this shell
+- Require you to log in again on a TTY
+
+After logging in, re-run this command.
+EOF
+
+    sleep 3
+
+    log_info "Switching system to multi-user (non-graphical) mode"
+    systemctl isolate multi-user.target
+    exit 1
+  fi
+
+  log_ok "System already in non-graphical (multi-user) mode"
 
   log_info "Applying profile: $1"
   source /etc/os-release
@@ -79,17 +169,6 @@ func_profile_apply() {
   fi
 
   log_ok "Fedora Linux detected"
-
-  if [[ "$TERM" != "linux" ]]; then
-    log_error "This command must be run from a Linux virtual console (TTY)."
-    echo
-    echo "Use Ctrl+Alt+F3 (or F2–F6) to switch to a TTY and try again."
-    exit 1
-  fi
-  log_ok "Running in Linux virtual console (TTY)"
-
-  log_info "Switching system to multi-user (non-graphical) mode"
-  systemctl isolate multi-user.target
 
   if [ -f /opt/reprofed/profiles/"$1".yaml ]; then
     profile_file="/opt/reprofed/profiles/${1}.yaml"
@@ -118,6 +197,9 @@ func_profile_apply() {
       exit 1
     fi
     log_ok "Profile supports architecture: $distro_arch"
+
+    check_internet
+    log_ok "Internet connection available"
 
     log_info "Configuring package repositories"
     if yq -e '.repos.rpmfusion-free == "true"' "$profile_file" > /dev/null 2>&1; then
@@ -162,9 +244,6 @@ EOF
         dnf5 copr enable -y "$copr_repo"
       done
     fi
-
-    check_internet
-    log_ok "Internet connection available"
 
     log_info "Preparing package transaction"
     minimal_packages="@core \
@@ -284,6 +363,7 @@ Options:
 EOF
 
   cat << EOF | column -t -s $'\t'
+  -u, --update	Update ReproFed
   -l, --list	List all profiles
   -a, --apply	Apply a profile
   -v, --version	Show version
@@ -293,6 +373,7 @@ EOF
   cat << EOF
 
 Examples:
+  sudo reprofed --update
   reprofed --list
   sudo reprofed --apply gnome
 EOF
@@ -310,14 +391,11 @@ func_main() {
   fi
 
   case "$1" in
+    -u | --update) [[ $# -eq 1 ]] && func_update || func_error_args ;;
     -l | --list) [[ $# -eq 1 ]] && func_profile_list || func_error_args ;;
-
     -a | --apply) [[ $# -eq 2 ]] && func_profile_apply "$2" || func_error_args ;;
-
     -v | --version) [[ $# -eq 1 ]] && func_version || func_error_args ;;
-
     -h | --help) [[ $# -eq 1 ]] && func_help || func_error_args ;;
-
     *) func_error_args ;;
   esac
 }

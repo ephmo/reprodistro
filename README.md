@@ -130,6 +130,12 @@ To safely apply a profile, it is recommended to **switch to a TTY and stop the g
 sudo systemctl isolate multi-user.target
 ```
 
+### Update ReproFed
+
+```bash
+sudo reprofed --update
+```
+
 ### Profile Management
 
 List all profiles.
@@ -152,7 +158,7 @@ sudo reprofed --apply gnome
 
 ```bash
 # Clone the repository
-git clone https://github.com/ephmo/reprofed.git
+git clone --depth=1 https://github.com/ephmo/reprofed.git
 cd reprofed
 
 # Run the installer
