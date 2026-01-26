@@ -1,0 +1,14 @@
+image: node:lts
+
+validate-format:
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y shfmt
+    - chmod +x check-line-length.sh
+  script:
+    - npm ci
+    - npm run format
+    - shfmt -d .
+    - ./check-line-length.sh
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
