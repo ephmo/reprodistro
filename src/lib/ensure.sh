@@ -4,10 +4,7 @@ ensure_curl() {
   local pkg_mgr
   local pkg_install_opts
 
-  log_info "Checking dependency: ${pkg}"
-
   if command -v "${cmd}" > /dev/null 2>&1; then
-    log_ok "Dependency already available: ${pkg}"
     return 0
   fi
 
@@ -34,7 +31,6 @@ ensure_curl() {
   }
 
   log_ok "Dependency installed: ${pkg}"
-  return 0
 }
 
 ensure_go_yq() {
@@ -42,10 +38,7 @@ ensure_go_yq() {
   local cmd="${pkg}"
   local platform
 
-  log_info "Checking dependency: ${pkg}"
-
   if command -v "${cmd}" > /dev/null 2>&1; then
-    log_ok "Dependency already available: ${pkg}"
     return 0
   fi
 
@@ -69,5 +62,4 @@ ensure_go_yq() {
   chmod +x "/usr/local/bin/${pkg}"
 
   log_ok "Dependency installed: ${pkg}"
-  return 0
 }

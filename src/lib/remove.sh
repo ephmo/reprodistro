@@ -12,5 +12,4 @@ core_remove() {
   }
 
   log_ok "${APP_NAME} removed successfully"
-  return 0
 }

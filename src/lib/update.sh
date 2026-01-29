@@ -5,9 +5,9 @@ core_update() {
 
   log_info "Checking for ${APP_NAME} updates"
 
-  current_version="$(app_version | tr -d '\n')"
+  current_version="$(core_app_version | tr -d '\n')"
   if [[ -z "${current_version}" ]]; then
-    log_error "${APP_NAME} is not installed"
+    log_error "${APP_NAME} version file is empty"
     return 1
   fi
 

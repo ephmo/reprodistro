@@ -19,6 +19,7 @@ source "$SCRIPT_DIR"/lib/update.sh
 source "$SCRIPT_DIR"/lib/remove.sh
 
 source "$SCRIPT_DIR"/lib/profile_list.sh
+source "$SCRIPT_DIR"/lib/profile_validate.sh
 source "$SCRIPT_DIR"/lib/profile_checks.sh
 source "$SCRIPT_DIR"/lib/profile_apply.sh
 
@@ -79,6 +80,8 @@ profile_apply() {
   trap release_lock EXIT INT TERM
   check_internet || exit 1
   ensure_go_yq || exit 1
+  core_profile_validate || exit 1
+  core_profile_checks || exit 1
   core_profile_apply || exit 1
 }
 
@@ -87,6 +90,7 @@ app_help() {
 }
 
 app_version() {
+  check_app_installed || exit 1
   core_app_version || exit 1
 }
 

@@ -13,5 +13,4 @@ acquire_lock() {
 release_lock() {
   flock -u "$LOCK_FD" || true
   rm -f "$LOCK_FILE" || true
-  return 0
 }
