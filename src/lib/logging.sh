@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 if [[ -t 1 ]] && [[ "${NO_COLOR:-}" != "1" ]]; then
   C_INFO=$'\033[1;34m'
   C_OK=$'\033[1;32m'
