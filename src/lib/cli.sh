@@ -7,10 +7,9 @@ Usage:
   ${APP_ID} --apply PROFILE
 
 Options:
-  -i, --install Install the application
-  -u, --update  Update the application
-  -r, --remove  Remove the application
+  -i, --install Install ${APP_NAME}
   -u, --update  Update ${APP_NAME}
+  -r, --remove  Remove ${APP_NAME}
   -l, --list    List all profiles
   -a, --apply   Apply a profile
   -h, --help    Show this help message
